@@ -410,14 +410,47 @@ function isPointInCloud(x, y, cloud) {
     return false;
 }
 
-// Fixed event handler for shooting clouds
-function handleCanvasClick(e) {
+// Enhanced event handler that works with scrolling
+function handleCanvasInteraction(e) {
+    // Get the original event if it's a touch event
+    const event = e.touches ? e.touches[0] : e;
+    
     // Get click coordinates relative to the canvas
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
     
-    // Check if we hit any clouds
+    // Check if click is on an interactive element by temporarily disabling pointer events
+    // on canvas to check what's underneath
+    canvas.style.pointerEvents = 'none';
+    const elementUnder = document.elementFromPoint(event.clientX, event.clientY);
+    canvas.style.pointerEvents = 'auto';
+    
+    // Check if we clicked on an interactive content element (link, button, etc.)
+    let isInteractiveElement = false;
+    let current = elementUnder;
+    
+    while (current && current !== document.body) {
+        // Check for common interactive elements
+        if (
+            current.tagName === 'A' || 
+            current.tagName === 'BUTTON' ||
+            current.classList.contains('button') ||
+            current.classList.contains('person') ||
+            (current.getAttribute && current.getAttribute('role') === 'button')
+        ) {
+            isInteractiveElement = true;
+            break;
+        }
+        current = current.parentElement;
+    }
+    
+    // If we clicked on an interactive element, let the event propagate naturally
+    if (isInteractiveElement) {
+        return;
+    }
+    
+    // Otherwise, handle cloud interaction
     let hitCloud = false;
     
     clouds.forEach(cloud => {
@@ -467,23 +500,15 @@ function handleCanvasClick(e) {
         explosions.push(missExplosion);
     }
     
-    // Prevent default behavior and stop propagation
+    // Prevent default behavior to avoid any scrolling issues
     e.preventDefault();
-    e.stopPropagation();
 }
 
-// Directly attach click event to canvas, and also handle touch events for mobile
-canvas.addEventListener('click', handleCanvasClick);
+// Setup event listeners for both mouse and touch
+canvas.addEventListener('click', handleCanvasInteraction);
 canvas.addEventListener('touchstart', function(e) {
-    // Convert touch event to equivalent mouse event
-    const touch = e.touches[0];
-    const mouseEvent = new MouseEvent('click', {
-        clientX: touch.clientX,
-        clientY: touch.clientY
-    });
-    handleCanvasClick(mouseEvent);
-    e.preventDefault(); // Prevent scrolling on mobile
-}, false);
+    handleCanvasInteraction(e);
+}, { passive: false }); // Use passive: false to allow preventDefault()
 
 // Animation loop with timestamp for smooth animation
 let lastTime = 0;
