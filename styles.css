@@ -6,43 +6,50 @@ html, body {
     background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
     min-height: 100vh;
     cursor: crosshair;
-    overflow: hidden; /* Скрыть скроллбар */
-    position: relative;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 body {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative; /* Changed from absolute to relative */
     width: 100%;
     height: 100%;
-    overflow: scroll; /* Прокручивается, но скроллбар не виден */
-    -webkit-overflow-scrolling: touch;
 }
 
-
+/* Canvas is now positioned fixed but allows pointer events */
 canvas {
-    position: fixed;
+    position: fixed; /* Keep canvas in view while scrolling */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1;
-    pointer-events: all; /* This ensures the canvas receives click events */
+    z-index: 1; /* Keep canvas below content */
 }
 
 .content {
     position: relative;
-    z-index: 2;
+    z-index: 2; /* Content above canvas */
     padding: 2rem;
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
-    pointer-events: auto;
+    pointer-events: none; /* Make content container initially transparent to events */
+}
+
+/* Make interactive elements receive pointer events */
+.content h1, 
+.content p, 
+.content .info-box, 
+.content .button, 
+.content .person, 
+.content a,
+.content .countdown,
+.content .issues-list,
+.content .issues-list li {
+    pointer-events: auto; /* Allow interaction with these elements */
 }
 
 h1 {
-        font-size: 3.5rem;
+    font-size: 3.5rem;
     margin-bottom: 1rem;
     text-shadow: 0 0 10px rgba(255, 105, 180, 0.7);
     background: linear-gradient(to right, #ff69b4, #9370db);
@@ -193,7 +200,6 @@ h2 {
     margin-right: 10px;
     color: #ff69b4;
 }
-
 
 @media (max-width: 768px) {
     h1 {
