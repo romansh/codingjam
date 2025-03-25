@@ -87,6 +87,15 @@ function createGrassTufts() {
             swayOffset: Math.random() * Math.PI * 2
         });
     }
+    // Ensure grass reaches the right edge by adding an extra tuft
+    grassTufts.push({
+        x: canvas.width - 1,
+        baseY: horizonY + Math.sin((canvas.width * wave.frequency) + wave.offset) * wave.amplitude,
+        height: 5 + Math.random() * 10,
+        width: 2 + Math.random() * 3,
+        swaySpeed: 0.01 + Math.random() * 0.02,
+        swayOffset: Math.random() * Math.PI * 2
+    });
 }
 
 const textPrimitives = [
@@ -216,20 +225,28 @@ function drawHorizon() {
     const points = [];
     const horizonY = canvas.height * 0.6;
     
-    for (let x = 0; x <= canvas.width; x += 10) {
+    // Collect horizon points with sine wave variation
+    for (let x = 0; x < canvas.width; x += 10) {
         const y = horizonY + Math.sin((x * wave.frequency) + wave.offset) * wave.amplitude;
         points.push({x, y});
     }
-    
+    // Explicitly add the last point at the right edge to ensure field reaches canvas edge
+    points.push({
+        x: canvas.width,
+        y: horizonY + Math.sin((canvas.width * wave.frequency) + wave.offset) * wave.amplitude
+    });
+
     ctx.beginPath();
     ctx.moveTo(0, points[0].y);
     
+    // Draw smooth curve through all points
     for (let i = 0; i < points.length - 1; i++) {
         const xc = (points[i].x + points[i + 1].x) / 2;
         const yc = (points[i].y + points[i + 1].y) / 2;
         ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
     }
     
+    // Complete the path to fill the field area
     ctx.lineTo(canvas.width, canvas.height);
     ctx.lineTo(0, canvas.height);
     ctx.closePath();
@@ -241,10 +258,12 @@ function drawHorizon() {
     ctx.fillStyle = fieldGradient;
     ctx.fill();
     
+    // Generate grass tufts if not already created
     if (grassTufts.length === 0) {
         createGrassTufts();
     }
     
+    // Draw swaying grass tufts
     grassTufts.forEach(tuft => {
         const sway = Math.sin(Date.now() * tuft.swaySpeed + tuft.swayOffset) * 2;
         
@@ -500,7 +519,7 @@ requestAnimationFrame(animate);
 
 window.addEventListener('resize', () => {
     resizeCanvas();
-    grassTufts.length = 0;
+    grassTufts.length = 0; // Clear grass tufts to regenerate them
     sun.x = canvas.width * 0.85;
     sun.y = canvas.height * 0.2;
     initializeClouds();
