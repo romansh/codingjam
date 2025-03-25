@@ -41,40 +41,37 @@ const primitiveShapes = [
 const clouds = [];
 
 function createCloud() {
-    const isMobile = window.innerWidth < 768; // Detect mobile based on screen width
+    const isMobile = window.innerWidth < 768;
     return {
-        x: canvas.width + Math.random() * canvas.width,  // Start just off-screen to the right
+        x: canvas.width + Math.random() * canvas.width,
         y: Math.random() * canvas.height * 0.4,
-        speed: 0.3 + Math.random() * 0.3,              // Moderate speed
-        size: isMobile ? (20 + Math.random() * 20) : (30 + Math.random() * 40), // Smaller clouds on mobile
+        speed: 0.3 + Math.random() * 0.3,
+        size: isMobile ? (20 + Math.random() * 20) : (30 + Math.random() * 40),
         shape: primitiveShapes[Math.floor(Math.random() * primitiveShapes.length)],
         color: colors.primitives[Math.floor(Math.random() * colors.primitives.length)],
         opacity: 0.4 + Math.random() * 0.3,
         rotation: Math.random() * Math.PI * 2,
         rotationSpeed: (Math.random() - 0.5) * 0.005,
-        active: true // Flag to check if cloud is active or exploded
+        active: true
     };
 }
 
-// Determine initial cloud count based on screen size
 function getInitialCloudCount() {
     const isMobile = window.innerWidth < 768;
-    return isMobile ? 4 : 10; // 4 clouds on mobile, 10 on desktop
+    return isMobile ? 4 : 10;
 }
 
-// Create initial primitive clouds
 function initializeClouds() {
-    clouds.length = 0; // Clear existing clouds
+    clouds.length = 0;
     for (let i = 0; i < getInitialCloudCount(); i++) {
         const cloud = createCloud();
-        cloud.x = Math.random() * canvas.width * 1.5;  // Distribute initial clouds more evenly
+        cloud.x = Math.random() * canvas.width * 1.5;
         clouds.push(cloud);
     }
 }
 
-initializeClouds(); // Call to set up initial clouds
+initializeClouds();
 
-// Grass tufts for realistic field
 const grassTufts = [];
 
 function createGrassTufts() {
@@ -92,7 +89,6 @@ function createGrassTufts() {
     }
 }
 
-// Floating text primitives with adjusted sizes to fit better
 const textPrimitives = [
     { text: "VIBE", x: 0.2, y: 0.65, speed: 0.3, size: 16, shape: 0, padding: 10 },
     { text: "CODE", x: 0.4, y: 0.7, speed: 0.2, size: 16, shape: 1, padding: 12 },
@@ -100,7 +96,6 @@ const textPrimitives = [
     { text: "PLAY", x: 0.8, y: 0.72, speed: 0.35, size: 16, shape: 1, padding: 8 }
 ];
 
-// Sun in the scene
 const sun = {
     x: canvas.width * 0.85,
     y: canvas.height * 0.2,
@@ -109,7 +104,6 @@ const sun = {
     glowOpacity: 0.3
 };
 
-// Explosion effect
 const explosions = [];
 
 function createExplosion(x, y, color) {
@@ -142,7 +136,6 @@ function createExplosion(x, y, color) {
     });
 }
 
-// Draw sky with gradient
 function drawSky() {
     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height * 0.7);
     gradient.addColorStop(0, colors.skyTop);
@@ -151,9 +144,7 @@ function drawSky() {
     ctx.fillRect(0, 0, canvas.width, canvas.height * 0.7);
 }
 
-// Draw sun with glow
 function drawSun() {
-    // Draw glow
     const gradient = ctx.createRadialGradient(
         sun.x, sun.y, sun.radius * 0.5,
         sun.x, sun.y, sun.radius * 3
@@ -167,14 +158,12 @@ function drawSun() {
     ctx.fillStyle = gradient;
     ctx.fill();
     
-    // Draw sun
     ctx.beginPath();
     ctx.arc(sun.x, sun.y, sun.radius, 0, Math.PI * 2);
     ctx.fillStyle = '#FFD700';
     ctx.fill();
 }
 
-// Draw primitive cloud
 function drawPrimitiveCloud(cloud) {
     if (!cloud.active) return;
     
@@ -190,7 +179,6 @@ function drawPrimitiveCloud(cloud) {
             ctx.arc(0, 0, cloud.size, 0, Math.PI * 2);
             ctx.fill();
             break;
-            
         case 'triangle':
             ctx.beginPath();
             ctx.moveTo(0, -cloud.size);
@@ -199,11 +187,9 @@ function drawPrimitiveCloud(cloud) {
             ctx.closePath();
             ctx.fill();
             break;
-            
         case 'rectangle':
             ctx.fillRect(-cloud.size, -cloud.size/2, cloud.size * 2, cloud.size);
             break;
-            
         case 'diamond':
             ctx.beginPath();
             ctx.moveTo(0, -cloud.size);
@@ -218,7 +204,6 @@ function drawPrimitiveCloud(cloud) {
     ctx.restore();
 }
 
-// Draw all clouds
 function drawClouds() {
     clouds.forEach(cloud => {
         if (cloud.active) {
@@ -227,9 +212,7 @@ function drawClouds() {
     });
 }
 
-// Draw the horizon (field)
 function drawHorizon() {
-    // Define wave points for the horizon
     const points = [];
     const horizonY = canvas.height * 0.6;
     
@@ -238,23 +221,19 @@ function drawHorizon() {
         points.push({x, y});
     }
     
-    // Draw the field using a gradient
     ctx.beginPath();
     ctx.moveTo(0, points[0].y);
     
-    // Create smooth curve through points
     for (let i = 0; i < points.length - 1; i++) {
         const xc = (points[i].x + points[i + 1].x) / 2;
         const yc = (points[i].y + points[i + 1].y) / 2;
         ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
     }
     
-    // Complete the shape
     ctx.lineTo(canvas.width, canvas.height);
     ctx.lineTo(0, canvas.height);
     ctx.closePath();
     
-    // Field gradient
     const fieldGradient = ctx.createLinearGradient(0, horizonY, 0, canvas.height);
     fieldGradient.addColorStop(0, colors.fieldFar);
     fieldGradient.addColorStop(1, colors.fieldNear);
@@ -262,16 +241,13 @@ function drawHorizon() {
     ctx.fillStyle = fieldGradient;
     ctx.fill();
     
-    // Draw grass tufts on horizon line
     if (grassTufts.length === 0) {
         createGrassTufts();
     }
     
     grassTufts.forEach(tuft => {
-        // Calculate sway based on time
         const sway = Math.sin(Date.now() * tuft.swaySpeed + tuft.swayOffset) * 2;
         
-        // Draw grass tuft
         ctx.beginPath();
         ctx.moveTo(tuft.x, tuft.baseY);
         ctx.quadraticCurveTo(
@@ -291,7 +267,6 @@ function drawHorizon() {
     });
 }
 
-// Draw explosions
 function drawExplosions() {
     explosions.forEach((explosion, index) => {
         explosion.particles.forEach(particle => {
@@ -303,43 +278,30 @@ function drawExplosions() {
             ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
             ctx.fill();
             
-            // Update particle position
             particle.x += particle.vx;
             particle.y += particle.vy;
-            
-            // Add gravity
             particle.vy += 0.05;
-            
-            // Reduce life
             particle.life--;
         });
         
-        // Remove particles that are dead
         explosion.particles = explosion.particles.filter(p => p.life > 0);
-        
-        // Remove explosion if all particles are gone
         if (explosion.particles.length === 0) {
             explosions.splice(index, 1);
         }
     });
-    
     ctx.globalAlpha = 1;
 }
 
-// Draw text primitives
 function drawTextPrimitives() {
     textPrimitives.forEach(primitive => {
         const x = primitive.x * canvas.width;
         const y = canvas.height * primitive.y + Math.sin(wave.offset * primitive.speed) * 15;
         
-        // Measure text width for better fit
         ctx.font = `bold ${primitive.size}px Inter, sans-serif`;
         const textWidth = ctx.measureText(primitive.text).width;
         const textHeight = primitive.size;
         
-        // Calculate shape size based on text dimensions and padding
         let shapeWidth, shapeHeight;
-        
         switch(primitive.shape) {
             case 0: // Circle
                 const radius = Math.max(textWidth, textHeight) / 2 + primitive.padding;
@@ -356,19 +318,17 @@ function drawTextPrimitives() {
                 break;
         }
         
-        // Draw shape
         ctx.fillStyle = colors.primitives[Math.floor(Date.now() / 2000) % colors.primitives.length];
-        
         switch(primitive.shape) {
-            case 0: // Circle
+            case 0:
                 ctx.beginPath();
                 ctx.arc(x, y, shapeWidth / 2, 0, Math.PI * 2);
                 ctx.fill();
                 break;
-            case 1: // Rectangle
+            case 1:
                 ctx.fillRect(x - shapeWidth / 2, y - shapeHeight / 2, shapeWidth, shapeHeight);
                 break;
-            case 2: // Triangle
+            case 2:
                 ctx.beginPath();
                 ctx.moveTo(x, y - shapeHeight / 2);
                 ctx.lineTo(x + shapeWidth / 2, y + shapeHeight / 2);
@@ -378,7 +338,6 @@ function drawTextPrimitives() {
                 break;
         }
         
-        // Draw text
         ctx.fillStyle = '#fff';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -386,63 +345,42 @@ function drawTextPrimitives() {
     });
 }
 
-// Check if a point is inside a cloud
 function isPointInCloud(x, y, cloud) {
     if (!cloud.active) return false;
     
-    // Transform point to cloud's local coordinates
     const dx = x - cloud.x;
     const dy = y - cloud.y;
-    
-    // Account for rotation
     const rotatedX = dx * Math.cos(-cloud.rotation) - dy * Math.sin(-cloud.rotation);
     const rotatedY = dx * Math.sin(-cloud.rotation) + dy * Math.cos(-cloud.rotation);
     
-    // Check shape
     switch(cloud.shape) {
         case 'circle':
             return Math.sqrt(rotatedX * rotatedX + rotatedY * rotatedY) <= cloud.size;
-            
         case 'triangle':
-            // Simple triangle hit detection
-            if (rotatedY > cloud.size) return false;
-            if (rotatedY < -cloud.size) return false;
-            
+            if (rotatedY > cloud.size || rotatedY < -cloud.size) return false;
             const width = cloud.size * (1 - rotatedY / cloud.size);
             return Math.abs(rotatedX) <= width;
-            
         case 'rectangle':
             return Math.abs(rotatedX) <= cloud.size && Math.abs(rotatedY) <= cloud.size/2;
-            
         case 'diamond':
             return (Math.abs(rotatedX) / cloud.size + Math.abs(rotatedY) / cloud.size) <= 1;
     }
-    
     return false;
 }
 
-// Enhanced event handler that works with scrolling
 function handleCanvasInteraction(e) {
-    // Get the original event if it's a touch event
     const event = e.touches ? e.touches[0] : e;
-    
-    // Get click coordinates relative to the canvas
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
     
-    // Check if click is on an interactive element by temporarily disabling pointer events
-    // on canvas to check what's underneath
     canvas.style.pointerEvents = 'none';
     const elementUnder = document.elementFromPoint(event.clientX, event.clientY);
     canvas.style.pointerEvents = 'auto';
     
-    // Check if we clicked on an interactive content element (link, button, etc.)
     let isInteractiveElement = false;
     let current = elementUnder;
-    
     while (current && current !== document.body) {
-        // Check for common interactive elements
         if (
             current.tagName === 'A' || 
             current.tagName === 'BUTTON' ||
@@ -456,46 +394,29 @@ function handleCanvasInteraction(e) {
         current = current.parentElement;
     }
     
-    // If we clicked on an interactive element, let the event propagate naturally
-    if (isInteractiveElement) {
-        return;
-    }
+    if (isInteractiveElement) return;
     
-    // Otherwise, handle cloud interaction
     let hitCloud = false;
-    
     clouds.forEach((cloud, index) => {
         if (cloud.active && isPointInCloud(x, y, cloud)) {
-            // Create explosion at cloud position
             createExplosion(cloud.x, cloud.y, cloud.color);
-            
-            // Remove the cloud instead of just deactivating
             clouds.splice(index, 1);
-            
-            // Add one new cloud
             clouds.push(createCloud());
-            
             hitCloud = true;
         }
     });
     
-    // If no cloud was hit, create small "miss" effect
     if (!hitCloud) {
         const missColor = 'rgba(255, 255, 255, 0.7)';
-        
-        // Create smaller explosion for miss effect
         const missExplosion = {
             x: x,
             y: y,
             particles: [],
             age: 0
         };
-        
-        // Add fewer particles for miss effect
         for (let i = 0; i < 10; i++) {
             const angle = Math.random() * Math.PI * 2;
             const speed = 0.5 + Math.random() * 1.5;
-            
             missExplosion.particles.push({
                 x: x,
                 y: y,
@@ -507,43 +428,30 @@ function handleCanvasInteraction(e) {
                 color: missColor
             });
         }
-        
         explosions.push(missExplosion);
     }
-    
-    // Prevent default behavior to avoid any scrolling issues
     e.preventDefault();
 }
 
-// Setup event listeners for both mouse and touch
 canvas.addEventListener('click', handleCanvasInteraction);
 canvas.addEventListener('touchstart', function(e) {
     handleCanvasInteraction(e);
-}, { passive: false }); // Use passive: false to allow preventDefault()
+}, { passive: false });
 
-// Animation loop with timestamp for smooth animation
 let lastTime = 0;
 let animationFrameId = null;
 let isAnimating = true;
 
 function animate(timestamp) {
-    if (!isAnimating) return; // Stop animation if paused
-    
+    if (!isAnimating) return;
     if (!lastTime) lastTime = timestamp;
     let deltaTime = timestamp - lastTime;
     lastTime = timestamp;
+    deltaTime = Math.min(deltaTime, 100);
     
-    // Cap deltaTime to prevent large jumps when tab is inactive
-    const maxDeltaTime = 100; // Max 100ms to avoid huge jumps
-    deltaTime = Math.min(deltaTime, maxDeltaTime);
-    
-    // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Update wave offset
     wave.offset += wave.speed * (deltaTime / 16);
     
-    // Draw scene elements
     drawSky();
     drawSun();
     drawClouds();
@@ -551,67 +459,53 @@ function animate(timestamp) {
     drawTextPrimitives();
     drawExplosions();
     
-    // Update clouds position smoothly based on delta time
     clouds.forEach(cloud => {
         if (cloud.active) {
-            // Move cloud to the left
             cloud.x -= cloud.speed * (deltaTime / 16);
-            
-            // Rotate if it has rotation speed
             cloud.rotation += cloud.rotationSpeed * (deltaTime / 16);
-            
-            // Reset cloud position when it goes off screen
             if (cloud.x + cloud.size < -100) {
                 cloud.x = canvas.width + cloud.size * 2;
                 cloud.y = Math.random() * canvas.height * 0.4;
-                cloud.size = window.innerWidth < 768 ? (20 + Math.random() * 20) : (30 + Math.random() * 40); // Adjust size on reset
+                cloud.size = window.innerWidth < 768 ? (20 + Math.random() * 20) : (30 + Math.random() * 40);
                 cloud.shape = primitiveShapes[Math.floor(Math.random() * primitiveShapes.length)];
-                cloud.speed = 0.3 + Math.random() * 0.3; // Reset speed for variety
+                cloud.speed = 0.3 + Math.random() * 0.3;
             }
         }
     });
     
-    // Update grass tufts if needed
     if (grassTufts.length > 0) {
         grassTufts.forEach(tuft => {
             tuft.baseY = canvas.height * 0.6 + Math.sin((tuft.x * wave.frequency) + wave.offset) * wave.amplitude;
         });
     }
     
-    // Continue animation
     animationFrameId = requestAnimationFrame(animate);
 }
 
-// Handle visibility change to pause/resume animation
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
-        // Tab is hidden, pause animation
         isAnimating = false;
         if (animationFrameId) {
             cancelAnimationFrame(animationFrameId);
             animationFrameId = null;
         }
     } else {
-        // Tab is visible, resume animation
         isAnimating = true;
-        lastTime = performance.now(); // Reset lastTime to avoid jump
+        lastTime = performance.now();
         requestAnimationFrame(animate);
     }
 });
 
-// Initialize animation
 requestAnimationFrame(animate);
 
-// Reset grass tufts and clouds on resize
 window.addEventListener('resize', () => {
     resizeCanvas();
-    grassTufts.length = 0; // Reset grass
-    sun.x = canvas.width * 0.85; // Reposition sun
+    grassTufts.length = 0;
+    sun.x = canvas.width * 0.85;
     sun.y = canvas.height * 0.2;
-    initializeClouds(); // Reset clouds with appropriate count and size
+    initializeClouds();
 });
 
-// Countdown timer
 function updateCountdown() {
     const now = new Date();
     const deadline = new Date('April 1, 2025 23:59:59 GMT');
@@ -632,3 +526,73 @@ function updateCountdown() {
 
 updateCountdown();
 setInterval(updateCountdown, 1000);
+
+// Load games from CSV
+async function loadGamesFromCSV() {
+    try {
+        const response = await fetch('games.csv');
+        const csvText = await response.text();
+        const games = parseCSV(csvText);
+        populateGameGrid(games);
+    } catch (error) {
+        console.error('Error loading CSV:', error);
+        document.getElementById('game-grid').innerHTML = '<p>Error loading games. Please try again later.</p>';
+    }
+}
+
+function parseCSV(csvText) {
+    const lines = csvText.trim().split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    return lines.slice(1).map(line => {
+        const values = line.split(',').map(v => v.trim());
+        return headers.reduce((obj, header, i) => {
+            obj[header] = values[i];
+            return obj;
+        }, {});
+    });
+}
+
+function populateGameGrid(games) {
+    const gameGrid = document.getElementById('game-grid');
+    gameGrid.innerHTML = '';
+    
+    games.forEach(game => {
+        const gameElement = `
+            <div class="game-example" data-loaded="false">
+                <a href="${game.url}" class="game-link">
+                    <div class="game-info">
+                        <h3>${game.title}</h3>
+                        <img src="${game.screenshot}" alt="${game.title} Screenshot" class="game-screenshot" loading="lazy">
+                        <div class="game-links">
+                            <a href="${game.x_profile}" target="_blank" class="game-creator">${game.x_profile.split('/').pop()}</a>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        `;
+        gameGrid.insertAdjacentHTML('beforeend', gameElement);
+    });
+}
+
+function setupLazyLoading() {
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const gameElement = entry.target;
+                if (gameElement.dataset.loaded === "false") {
+                    const img = gameElement.querySelector('.game-screenshot');
+                    img.src = img.getAttribute('src');
+                    gameElement.dataset.loaded = "true";
+                }
+            }
+        });
+    }, {
+        rootMargin: '100px'
+    });
+
+    document.querySelectorAll('.game-example').forEach(game => observer.observe(game));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadGamesFromCSV().then(() => setupLazyLoading());
+});
