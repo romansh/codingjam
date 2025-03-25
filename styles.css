@@ -21,7 +21,7 @@ canvas {
     position: fixed; /* Fixed position for background effect */
     top: 0;
     left: 0;
- innerhalb: 100%;
+    width: 100%; 
     height: 100%;
     z-index: 1; /* Behind content */
 }
@@ -342,6 +342,12 @@ h2 {
     pointer-events: none;
 }
 
+.loading_placeholder {
+    text-align: center; 
+    padding: 20px; 
+    color: #666;
+}
+
 /* Responsive design adjustments */
 @media (max-width: 768px) {
     h1 {
@@ -404,3 +410,4 @@ h2 {
     .game-screenshot {
         height: 150px; /* Smaller height for mobile */
     }
+}
