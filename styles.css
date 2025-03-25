@@ -28,7 +28,7 @@ canvas {
 .content {
     position: relative;
     z-index: 2; /* Content above canvas */
-    padding: 2rem;
+    padding: 0.5rem;
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
@@ -58,9 +58,13 @@ h1 {
     -webkit-text-fill-color: transparent;
 }
 
+.hero {
+    margin-top: 1.5rem;
+}
+
 .tagline {
     font-size: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 4rem;
     color: #e2ccff;
 }
 
@@ -71,7 +75,7 @@ h1 {
 .info-box {
     background: rgba(0, 0, 0, 0.4);
     border-radius: 12px;
-    padding: 2rem;
+    padding-bottom: 1.5rem;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     margin-bottom: 2rem;
@@ -90,8 +94,8 @@ h2 {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 2rem;
-    margin: 1.5rem 0;
+    /*gap: 2rem;*/
+    margin: 0;
 }
 
 .section {
@@ -201,6 +205,139 @@ h2 {
     color: #ff69b4;
 }
 
+/* Compact Jury and Sponsors Section */
+/* Compact Jury and Sponsors Section */
+.compact-jury-sponsors {
+    margin-bottom: 0.5rem;
+    padding: 0.1rem;
+    max-height: 40px; /* Limit section height */
+    overflow: hidden; /* Hide overflow */
+}
+
+.compact-jury-sponsors .jury-sponsors {
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: nowrap; /* Prevent line wrapping */
+    overflow-x: auto; /* Horizontal scroll if needed */
+}
+
+.compact-jury-sponsors .section {
+    flex: none;
+    display: flex;
+    align-items: center;
+}
+
+.compact-jury-sponsors .person-list {
+    gap: 0.3rem;
+    align-items: center;
+}
+
+.compact-jury-sponsors .person {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.8rem;
+    white-space: nowrap; /* Текст в одну строку */
+    overflow: hidden; /* Скрываем то, что не помещается */
+    text-overflow: ellipsis; /* Многоточие для длинного текста */
+    max-width: 150px; /* Можно регулировать ширину */
+}
+
+.compact-jury-sponsors h2 {
+    font-size: 1rem;
+    margin-bottom: 0.9rem;
+    text-align: center;
+}
+/* Game Examples Grid */
+.game-examples {
+    padding: 2rem;
+}
+
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.game-example {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    position: relative; /* For positioning nested elements */
+}
+
+.game-example:hover {
+    transform: scale(1.05);
+}
+
+.game-link {
+    display: block; /* Makes the entire block clickable */
+    text-decoration: none; /* Removes underline */
+    color: inherit; /* Inherits text color */
+}
+
+.game-screenshot {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.game-info {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column; /* Stacks title, image, and profile vertically */
+    align-items: center; /* Centers all items horizontally */
+}
+
+.game-info h3 {
+    margin: 0 0 0.5rem 0; /* Margin below title */
+    font-size: 1.2rem;
+    color: #fff;
+}
+
+.game-links {
+    display: flex;
+    justify-content: center; /* Centers the profile link */
+    align-items: center;
+    margin-top: 0.5rem; /* Adds space above profile link */
+}
+
+.game-creator {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.game-creator:hover {
+    color: #ff69b4;
+}
+
+/* Prevents underline on hover for the entire block */
+.game-link:hover {
+    text-decoration: none;
+}
+
+/* Ensures the profile link captures its own click */
+.game-creator {
+    pointer-events: auto; /* Enables clickability only for this link */
+}
+
+/* Disables pointer events for the block by default */
+.game-example {
+    pointer-events: none; /* Disables events for the entire block */
+}
+
+/* Enables pointer events for the wrapper link */
+.game-link {
+    pointer-events: auto; /* Enables events for the wrapper */
+}
+
+/* Disables pointer events for nested elements except .game-creator */
+.game-info, .game-screenshot, h3 {
+    pointer-events: none; /* Disables events for nested elements */
+}
+
+
 @media (max-width: 768px) {
     h1 {
         font-size: 3rem;
@@ -231,5 +368,9 @@ h2 {
     /* Hide about jam section on mobile */
     .about-jam {
         display: none;
+    }
+
+    .game-grid {
+        grid-template-columns: 1fr;
     }
 }
