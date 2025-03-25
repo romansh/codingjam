@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2025 Vibe Coding Game Jam</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="preload" href="games.csv" as="fetch" crossorigin="anonymous">
     
     <!-- Open Graph tags -->
     <meta property="og:title" content="2025 Vibe Coding Game Jam" />
@@ -19,13 +20,12 @@
     <meta name="twitter:description" content="The first game jam for AI vibecoded games. Jury: @karpathy, @timsoret, @mrdoob, @s13k_, @levelsio. Hashtag: #vibejam. Deadline: April 1, 2025." />
     <meta name="twitter:image" content="https://romansh.github.io/jam/og-image.png" />
     <meta name="twitter:url" content="https://romansh.github.io/jam/" />
-    
 </head>
 <body>
     <canvas id="scene"></canvas>
     
     <div class="content">
-        <!-- Jury and Sponsors Section Moved Up -->
+        <!-- Jury and Sponsors Section -->
         <div class="compact-jury-sponsors">
             <div class="jury-sponsors">
                 <div class="section">
@@ -59,177 +59,11 @@
             <a href="http://jam.pieter.com" class="button">Submit Your Game</a>
         </div>
 
-        <!-- New Game Examples Section -->
-<div class="info-box game-examples">
-    <h2>Past Game Examples</h2>
-    <div class="game-grid">
-        <div class="game-example">
-            <a href="#" class="game-link">
-                <div class="game-info">
-                    <h3>Neon Racer</h3>
-                    <img src="https://picsum.photos/id/237/300/200" alt="Game Screenshot" class="game-screenshot">
-                    <div class="game-links">
-                        <a href="https://x.com/username" target="_blank" class="game-creator">@creator1</a>
-                    </div>
-                </div>
-            </a>
+        <!-- Game Examples Section -->
+        <div class="info-box game-examples">
+            <h2>Past Game Examples</h2>
+            <div class="game-grid" id="game-grid"></div>
         </div>
-        <div class="game-example">
-            <a href="#" class="game-link">
-                <div class="game-info">
-                    <h3>Quantum Puzzle</h3>
-                    <img src="https://picsum.photos/id/238/300/200" alt="Game Screenshot" class="game-screenshot">
-                    <div class="game-links">
-                        <a href="https://x.com/username" target="_blank" class="game-creator">@creator2</a>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="game-example">
-            <a href="#" class="game-link">
-                <div class="game-info">
-                    <h3>Cyber Maze</h3>
-                    <img src="https://picsum.photos/id/239/300/200" alt="Game Screenshot" class="game-screenshot">
-                    <div class="game-links">
-                        <a href="https://x.com/username" target="_blank" class="game-creator">@creator3</a>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="game-example">
-            <a href="#" class="game-link">
-                <div class="game-info">
-                    <h3>Pixel Runner</h3>
-                    <img src="https://picsum.photos/id/240/300/200" alt="Game Screenshot" class="game-screenshot">
-                    <div class="game-links">
-                        <a href="https://x.com/username" target="_blank" class="game-creator">@creator4</a>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="game-example">
-            <a href="#" class="game-link">
-                <div class="game-info">
-                    <h3>Space Drifter</h3>
-                    <img src="https://picsum.photos/id/241/300/200" alt="Game Screenshot" class="game-screenshot">
-                    <div class="game-links">
-                        <a href="https://x.com/username" target="_blank" class="game-creator">@creator5</a>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="game-example">
-            <a href="#" class="game-link">
-                <div class="game-info">
-                    <h3>Glitch Escape</h3>
-                    <img src="https://picsum.photos/id/242/300/200" alt="Game Screenshot" class="game-screenshot">
-                    <div class="game-links">
-                        <a href="https://x.com/username" target="_blank" class="game-creator">@creator6</a>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="game-example">
-            <a href="#" class="game-link">
-                <div class="game-info">
-                    <h3>Retro Blaster</h3>
-                    <img src="https://picsum.photos/id/243/300/200" alt="Game Screenshot" class="game-screenshot">
-                    <div class="game-links">
-                        <a href="https://x.com/username" target="_blank" class="game-creator">@creator7</a>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="game-example">
-            <a href="#" class="game-link">
-                <div class="game-info">
-                    <h3>Neon Drift</h3>
-                    <img src="https://picsum.photos/id/244/300/200" alt="Game Screenshot" class="game-screenshot">
-                    <div class="game-links">
-                        <a href="https://x.com/username" target="_blank" class="game-creator">@creator8</a>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="game-example">
-            <a href="#" class="game-link">
-                <div class="game-info">
-                    <h3>Code Breaker</h3>
-                    <img src="https://picsum.photos/id/264/300/200" alt="Game Screenshot" class="game-screenshot">
-                    <div class="game-links">
-                        <a href="https://x.com/username" target="_blank" class="game-creator">@creator9</a>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="game-example">
-            <a href="#" class="game-link">
-                <div class="game-info">
-                    <h3>Byte Jumper</h3>
-                    <img src="https://picsum.photos/id/266/300/200" alt="Game Screenshot" class="game-screenshot">
-                    <div class="game-links">
-                        <a href="https://x.com/username" target="_blank" class="game-creator">@creator10</a>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="game-example">
-            <a href="#" class="game-link">
-                <div class="game-info">
-                    <h3>Synth Wave</h3>
-                    <img src="https://picsum.photos/id/260/300/200" alt="Game Screenshot" class="game-screenshot">
-                    <div class="game-links">
-                        <a href="https://x.com/username" target="_blank" class="game-creator">@creator11</a>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="game-example">
-            <a href="#" class="game-link">
-                <div class="game-info">
-                    <h3>Grid Runner</h3>
-                    <img src="https://picsum.photos/id/261/300/200" alt="Game Screenshot" class="game-screenshot">
-                    <div class="game-links">
-                        <a href="https://x.com/username" target="_blank" class="game-creator">@creator12</a>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="game-example">
-            <a href="#" class="game-link">
-                <div class="game-info">
-                    <h3>Virtual Dash</h3>
-                    <img src="https://picsum.photos/id/265/300/200" alt="Game Screenshot" class="game-screenshot">
-                    <div class="game-links">
-                        <a href="https://x.com/username" target="_blank" class="game-creator">@creator13</a>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="game-example">
-            <a href="#" class="game-link">
-                <div class="game-info">
-                    <h3>Flux Shooter</h3>
-                    <img src="https://picsum.photos/id/250/300/200" alt="Game Screenshot" class="game-screenshot">
-                    <div class="game-links">
-                        <a href="https://x.com/username" target="_blank" class="game-creator">@creator14</a>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="game-example">
-            <a href="#" class="game-link">
-                <div class="game-info">
-                    <h3>Chrono Shift</h3>
-                    <img src="https://picsum.photos/id/251/300/200" alt="Game Screenshot" class="game-screenshot">
-                    <div class="game-links">
-                        <a href="https://x.com/username" target="_blank" class="game-creator">@creator15</a>
-                    </div>
-                </div>
-            </a>
-        </div>
-    </div>
-</div>
     </div>
 
     <script src="script.js"></script>
