@@ -41,11 +41,12 @@ const primitiveShapes = [
 const clouds = [];
 
 function createCloud() {
+    const isMobile = window.innerWidth < 768; // Detect mobile based on screen width
     return {
-        x: Math.random() * canvas.width * 1.5 + canvas.width,  // Start off-screen to the right
+        x: canvas.width + Math.random() * canvas.width,  // Start just off-screen to the right
         y: Math.random() * canvas.height * 0.4,
-        speed: 0.3 + Math.random() * 0.3,
-        size: 30 + Math.random() * 40,
+        speed: 0.3 + Math.random() * 0.3,              // Moderate speed
+        size: isMobile ? (20 + Math.random() * 20) : (30 + Math.random() * 40), // Smaller clouds on mobile
         shape: primitiveShapes[Math.floor(Math.random() * primitiveShapes.length)],
         color: colors.primitives[Math.floor(Math.random() * colors.primitives.length)],
         opacity: 0.4 + Math.random() * 0.3,
@@ -55,13 +56,23 @@ function createCloud() {
     };
 }
 
-// Create primitive clouds initially at distributed positions
-for (let i = 0; i < 15; i++) {
-    const cloud = createCloud();
-    // Distribute clouds across the width of the canvas
-    cloud.x = Math.random() * canvas.width * 2;
-    clouds.push(cloud);
+// Determine initial cloud count based on screen size
+function getInitialCloudCount() {
+    const isMobile = window.innerWidth < 768;
+    return isMobile ? 4 : 10; // 4 clouds on mobile, 10 on desktop
 }
+
+// Create initial primitive clouds
+function initializeClouds() {
+    clouds.length = 0; // Clear existing clouds
+    for (let i = 0; i < getInitialCloudCount(); i++) {
+        const cloud = createCloud();
+        cloud.x = Math.random() * canvas.width * 1.5;  // Distribute initial clouds more evenly
+        clouds.push(cloud);
+    }
+}
+
+initializeClouds(); // Call to set up initial clouds
 
 // Grass tufts for realistic field
 const grassTufts = [];
@@ -453,15 +464,15 @@ function handleCanvasInteraction(e) {
     // Otherwise, handle cloud interaction
     let hitCloud = false;
     
-    clouds.forEach(cloud => {
+    clouds.forEach((cloud, index) => {
         if (cloud.active && isPointInCloud(x, y, cloud)) {
             // Create explosion at cloud position
             createExplosion(cloud.x, cloud.y, cloud.color);
             
-            // Deactivate cloud
-            cloud.active = false;
+            // Remove the cloud instead of just deactivating
+            clouds.splice(index, 1);
             
-            // Add new cloud off-screen
+            // Add one new cloud
             clouds.push(createCloud());
             
             hitCloud = true;
@@ -512,16 +523,25 @@ canvas.addEventListener('touchstart', function(e) {
 
 // Animation loop with timestamp for smooth animation
 let lastTime = 0;
+let animationFrameId = null;
+let isAnimating = true;
+
 function animate(timestamp) {
+    if (!isAnimating) return; // Stop animation if paused
+    
     if (!lastTime) lastTime = timestamp;
-    const deltaTime = timestamp - lastTime;
+    let deltaTime = timestamp - lastTime;
     lastTime = timestamp;
+    
+    // Cap deltaTime to prevent large jumps when tab is inactive
+    const maxDeltaTime = 100; // Max 100ms to avoid huge jumps
+    deltaTime = Math.min(deltaTime, maxDeltaTime);
     
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     // Update wave offset
-    wave.offset += wave.speed;
+    wave.offset += wave.speed * (deltaTime / 16);
     
     // Draw scene elements
     drawSky();
@@ -544,8 +564,9 @@ function animate(timestamp) {
             if (cloud.x + cloud.size < -100) {
                 cloud.x = canvas.width + cloud.size * 2;
                 cloud.y = Math.random() * canvas.height * 0.4;
-                cloud.size = 30 + Math.random() * 40;
+                cloud.size = window.innerWidth < 768 ? (20 + Math.random() * 20) : (30 + Math.random() * 40); // Adjust size on reset
                 cloud.shape = primitiveShapes[Math.floor(Math.random() * primitiveShapes.length)];
+                cloud.speed = 0.3 + Math.random() * 0.3; // Reset speed for variety
             }
         }
     });
@@ -558,17 +579,36 @@ function animate(timestamp) {
     }
     
     // Continue animation
-    requestAnimationFrame(animate);
+    animationFrameId = requestAnimationFrame(animate);
 }
 
-// Initialize
+// Handle visibility change to pause/resume animation
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        // Tab is hidden, pause animation
+        isAnimating = false;
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+    } else {
+        // Tab is visible, resume animation
+        isAnimating = true;
+        lastTime = performance.now(); // Reset lastTime to avoid jump
+        requestAnimationFrame(animate);
+    }
+});
+
+// Initialize animation
 requestAnimationFrame(animate);
 
-// Reset grass tufts on resize
+// Reset grass tufts and clouds on resize
 window.addEventListener('resize', () => {
-    grassTufts.length = 0;
-    sun.x = canvas.width * 0.85;
+    resizeCanvas();
+    grassTufts.length = 0; // Reset grass
+    sun.x = canvas.width * 0.85; // Reposition sun
     sun.y = canvas.height * 0.2;
+    initializeClouds(); // Reset clouds with appropriate count and size
 });
 
 // Countdown timer
